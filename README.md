@@ -25,7 +25,7 @@ erDiagram
 ## Install
 
 ```bash
-bun add -d drizzle-to-erd
+bun add -d github:Victor-Iroko/drizzle-to-erd
 ```
 
 `drizzle-orm` is a peer dependency — it should already be in your project. Image output uses `@viz-js/viz` (Graphviz WASM) and `@resvg/resvg-js` (PNG rasterizer) — both installed automatically.
@@ -34,28 +34,28 @@ bun add -d drizzle-to-erd
 
 ```bash
 # print Mermaid to stdout
-bunx drizzle-to-erd
+bunx github:Victor-Iroko/drizzle-to-erd
 
 # write a ```mermaid```-fenced markdown file
-bunx drizzle-to-erd --out ERD.md
+bunx github:Victor-Iroko/drizzle-to-erd --out ERD.md
 
 # raw mermaid without the fence
-bunx drizzle-to-erd --format raw --out schema.mermaid
+bunx github:Victor-Iroko/drizzle-to-erd --format raw --out schema.mermaid
 
 # SVG image (auto-detected from .svg extension)
-bunx drizzle-to-erd --out ERD.svg
+bunx github:Victor-Iroko/drizzle-to-erd --out ERD.svg
 
 # PNG image (auto-detected from .png extension; requires @resvg/resvg-js)
-bunx drizzle-to-erd --out ERD.png
+bunx github:Victor-Iroko/drizzle-to-erd --out ERD.png
 
 # explicit format
-bunx drizzle-to-erd --format svg --out ERD.svg
+bunx github:Victor-Iroko/drizzle-to-erd --format svg --out ERD.svg
 
 # skip column attributes (entities + relationships only)
-bunx drizzle-to-erd --no-attributes
+bunx github:Victor-Iroko/drizzle-to-erd --no-attributes
 
 # custom config path
-bunx drizzle-to-erd --config ./configs/drizzle.config.ts
+bunx github:Victor-Iroko/drizzle-to-erd --config ./configs/drizzle.config.ts
 ```
 
 The CLI looks for `drizzle.config.{ts,js,mts,mjs,cts,cjs}` in the current working directory by default.
