@@ -1,0 +1,31 @@
+{
+  "name": "drizzle-to-erd",
+  "version": "0.1.0",
+  "module": "index.ts",
+  "type": "module",
+  "bin": {
+    "drizzle-to-erd": "./src/cli.ts"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./package.json": "./package.json"
+  },
+  "private": true,
+  "scripts": {
+    "erd": "bun run src/cli.ts",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "drizzle-kit": "^0.31.10",
+    "drizzle-orm": "^0.45.1"
+  },
+  "peerDependencies": {
+    "drizzle-orm": ">=0.30.0",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@viz-js/viz": "^3.28.0"
+  }
+}

@@ -1,0 +1,49 @@
+erDiagram
+    comments {
+        serial id PK
+        uuid post_id FK
+        integer author_id FK
+        text body
+    }
+
+    organizations {
+        serial id PK
+        text name
+        integer owner_id FK
+    }
+
+    posts {
+        uuid id PK "default: gen_random_uuid()"
+        integer author_id FK
+        text title
+        boolean published "default: false"
+        timestamp created_at "default: now()"
+    }
+
+    posts_to_tags {
+        uuid post_id FK
+        serial tag_id FK
+    }
+
+    tags {
+        serial id PK
+        varchar name UK
+    }
+
+    users {
+        serial id PK
+        varchar email UK
+        text display_name
+        text bio
+        user_role role "default: 'member'"
+        boolean is_active "default: true"
+        jsonb metadata
+        timestamp created_at "default: now()"
+    }
+
+    posts ||--o{ comments : "post_id"
+    users o|--o{ comments : "author_id"
+    users ||--o{ organizations : "owner_id"
+    users ||--o{ posts : "author_id"
+    posts ||--o{ posts_to_tags : "post_id"
+    tags ||--o{ posts_to_tags : "tag_id"
