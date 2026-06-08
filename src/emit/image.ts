@@ -36,7 +36,7 @@ export async function emitPng(
 		const mod = await import("@resvg/resvg-js");
 		const Resvg = mod.Resvg;
 		const resvg = new Resvg(flatSvg, {
-			fitTo: { mode: "width", value: 7680 },
+			fitTo: { mode: "zoom", value: 3 },
 			background: "white",
 			font: {
 				fontFiles: FONT_FILES,
@@ -46,6 +46,7 @@ export async function emitPng(
 			},
 		});
 		const rendered = resvg.render();
+		console.log(`Actual output: ${rendered.width} × ${rendered.height}`);
 		const png = rendered.asPng();
 		return png instanceof Uint8Array ? png : new Uint8Array(png);
 	} catch (err) {

@@ -80,7 +80,7 @@ Add the rendered SVG to your README:
 <img src="./ERD.svg" width="720" />
 ```
 
-PNG output rasterizes the SVG via `@resvg/resvg-js` at 1600px wide. If that dep is missing, the CLI errors with a clear install command.
+PNG output rasterizes the SVG via `@resvg/resvg-js` at 3× the viewBox dimensions. If that dep is missing, the CLI errors with a clear install command.
 
 ## Programmatic API
 
