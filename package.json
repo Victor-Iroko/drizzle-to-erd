@@ -26,6 +26,6 @@
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
-    "@viz-js/viz": "^3.28.0"
+    "beautiful-mermaid": "^1.1.3"
   }
 }

@@ -1,10 +1,10 @@
+import { dirname, resolve } from "node:path";
 import { is, Table } from "drizzle-orm";
 import { findConfig, loadConfig } from "./config.js";
 import { loadSchema } from "./loadSchema.js";
 import { introspectPg } from "./introspect/pg.js";
 import { emitMermaid, type EmitOptions } from "./emit/mermaid.js";
 import { emitSvg, emitPng } from "./emit/image.js";
-import { emitDot } from "./emit/dot.js";
 import type { IRTable } from "./ir.js";
 
 export type GenerateOptions = {
@@ -20,7 +20,9 @@ async function loadTables(opts: GenerateOptions): Promise<Table[]> {
 	if (opts.schema) {
 		return Object.values(opts.schema).filter((v): v is Table => is(v, Table));
 	}
-	const configPath = opts.configPath ?? (await findConfig(opts.cwd));
+	const configPath = opts.configPath
+		? resolve(opts.cwd ?? process.cwd(), opts.configPath)
+		: await findConfig(opts.cwd);
 	const config = await loadConfig(configPath);
 
 	if (config.dialect !== "postgresql") {
@@ -29,7 +31,7 @@ async function loadTables(opts: GenerateOptions): Promise<Table[]> {
 		);
 	}
 
-	return await loadSchema(config.schema, { cwd: opts.cwd });
+	return await loadSchema(config.schema, { cwd: dirname(configPath) });
 }
 
 export type GenerateResult = {
@@ -61,9 +63,9 @@ export async function generate(
 		case "raw":
 			return emitMermaid(ir, opts.emit);
 		case "svg":
-			return await emitSvg(ir);
+			return emitSvg(ir, opts.emit);
 		case "png":
-			return await emitPng(ir);
+			return await emitPng(ir, opts.emit);
 	}
 }
 
@@ -75,10 +77,9 @@ export function detectFormat(out: string | undefined, explicit: string | undefin
 	return "md";
 }
 
-export { emitMermaid, emitSvg, emitPng, emitDot };
+export { emitMermaid, emitSvg, emitPng };
 export type { EmitOptions } from "./emit/mermaid.js";
 export type { ImageOptions, ImageFormat } from "./emit/image.js";
-export type { DotOptions } from "./emit/dot.js";
 export type { IRTable, IRColumn, IRFK } from "./ir.js";
 export { introspectPg } from "./introspect/pg.js";
 export { loadSchema, resolveSchemaFiles } from "./loadSchema.js";

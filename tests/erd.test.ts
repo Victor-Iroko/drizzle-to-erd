@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeAll } from "bun:test";
-import { generate, emitDot, emitSvg, emitPng, detectFormat } from "../index.js";
+import { generate, emitSvg, emitPng, detectFormat } from "../index.js";
 import { resolve } from "node:path";
 
 describe("generate()", () => {
@@ -165,48 +165,6 @@ describe("format detection", () => {
 	});
 });
 
-describe("emitDot()", () => {
-	async function loadIR() {
-		const { introspectPg } = await import("../index.js");
-		const { is, Table } = await import("drizzle-orm");
-		const schema = (await import("./fixtures/schema.js")) as Record<string, unknown>;
-		const ts = Object.values(schema).filter((v) => is(v as never, Table));
-		return ts.map((t) => introspectPg(t as never));
-	}
-
-	it("produces a digraph with each table as a record", async () => {
-		const ir = await loadIR();
-		const dotStr = emitDot(ir);
-		expect(dotStr).toStartWith("digraph ER {");
-		expect(dotStr).toContain("rankdir=TB");
-		expect(dotStr).toContain('bgcolor="white"');
-		expect(dotStr).toContain("shape=record");
-		expect(dotStr).toContain('color="#111827"');
-		expect(dotStr).toContain("users");
-		expect(dotStr).toContain("posts");
-		expect(dotStr).toContain("comments");
-		expect(dotStr).toContain("->");
-	});
-
-	it("renders cardinality markers on edges", async () => {
-		const ir = await loadIR();
-		const dot = emitDot(ir);
-		// nullable FK (comments.author_id) → odot at the "one" end
-		expect(dot).toMatch(/users -> comments.*odot/);
-		// non-null FK (posts.author_id) → tee at the "one" end
-		expect(dot).toMatch(/users -> posts.*tee/);
-		// crow's foot at the "many" end
-		expect(dot).toContain("arrowhead=crow");
-	});
-
-	it("quotes edge labels as strings (not identifiers)", async () => {
-		const ir = await loadIR();
-		const dot = emitDot(ir);
-		// author_id has no spaces but the label should still be a quoted string
-		expect(dot).toMatch(/label="author_id"/);
-	});
-});
-
 describe("emitSvg()", () => {
 	const fixtureConfig = resolve(import.meta.dir, "fixtures/drizzle.config.ts");
 
@@ -221,17 +179,21 @@ describe("emitSvg()", () => {
 	it("produces a valid SVG string", async () => {
 		const ir = await loadIR();
 		const svg = await emitSvg(ir);
-		expect(svg).toStartWith("<?xml");
+		expect(svg).toStartWith("<svg");
 		expect(svg).toContain("<svg");
 		expect(svg).toContain("</svg>");
 		expect(svg).toContain("users");
 		expect(svg).toContain("posts");
 	});
 
-	it("SVG contains a record node per table", async () => {
+	it("SVG contains each table name", async () => {
 		const ir = await loadIR();
 		const svg = await emitSvg(ir);
-		expect(svg.match(/<title>/g)?.length ?? 0).toBeGreaterThanOrEqual(6);
+		expect(svg).toContain("users");
+		expect(svg).toContain("posts");
+		expect(svg).toContain("comments");
+		expect(svg).toContain("tags");
+		expect(svg).toContain("organizations");
 	});
 });
 
@@ -262,7 +224,7 @@ describe("CLI image output", () => {
 		const exitCode = await proc.exited;
 		expect(exitCode).toBe(0);
 		const contents = await Bun.file(tmp).text();
-		expect(contents).toStartWith("<?xml");
+		expect(contents).toStartWith("<svg");
 		expect(contents).toContain("<svg");
 		await Bun.write(tmp, "");
 	});

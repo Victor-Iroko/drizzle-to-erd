@@ -1,37 +1,27 @@
-import { instance } from "@viz-js/viz";
+import { renderMermaidSVG } from "beautiful-mermaid";
 import type { IRTable } from "../ir.js";
-import { emitDot, type DotOptions } from "./dot.js";
+import { emitMermaid, type EmitOptions } from "./mermaid.js";
+import { inlineCssVariables } from "./inline-css.js";
 
 export type ImageFormat = "svg" | "png";
 
-let cached: Awaited<ReturnType<typeof instance>> | null = null;
+export type ImageOptions = EmitOptions;
 
-async function getViz() {
-	if (!cached) {
-		cached = await instance();
-	}
-	return cached;
-}
-
-export type ImageOptions = DotOptions;
-
-export function emitSvg(tables: IRTable[], opts: ImageOptions = {}): Promise<string> {
-	return (async () => {
-		const dot = emitDot(tables, opts);
-		const viz = await getViz();
-		return viz.renderString(dot, { format: "svg" });
-	})();
+export function emitSvg(tables: IRTable[], opts: ImageOptions = {}): string {
+	const mermaid = emitMermaid(tables, opts);
+	return renderMermaidSVG(mermaid);
 }
 
 export async function emitPng(
 	tables: IRTable[],
 	opts: ImageOptions = {},
 ): Promise<Uint8Array> {
-	const svg = await emitSvg(tables, opts);
+	const svg = emitSvg(tables, opts);
+	const flatSvg = inlineCssVariables(svg);
 	try {
 		const mod = await import("@resvg/resvg-js");
 		const Resvg = mod.Resvg;
-		const resvg = new Resvg(svg, {
+		const resvg = new Resvg(flatSvg, {
 			fitTo: { mode: "width", value: 1600 },
 			background: "white",
 		});

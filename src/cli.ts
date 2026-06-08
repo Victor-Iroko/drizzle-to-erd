@@ -40,7 +40,7 @@ function parseArgs(argv: string[]): Args {
 
 const HELP = `drizzle-to-erd
 
-Generate a Mermaid erDiagram, Graphviz dot, or SVG/PNG image from your Drizzle ORM schema.
+Generate a Mermaid erDiagram or SVG/PNG image from your Drizzle ORM schema.
 
 Usage:
   bunx drizzle-to-erd [options]
