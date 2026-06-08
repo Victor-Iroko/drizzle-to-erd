@@ -98,7 +98,31 @@ export function inlineCssVariables(svg: string, opts: InlineOptions = {}): strin
 		`<svg$1style="background:${bg}"`,
 	);
 
-	result = result.replace(/<style>[\s\S]*?<\/style>\s*/, "");
+	const styleMatch = result.match(/<style>([\s\S]*?)<\/style>/);
+	if (styleMatch) {
+		const styleContent = styleMatch[1];
+		const fontRules: string[] = [];
+		let currentSelector = "";
+		for (const line of styleContent.split("\n")) {
+			const trimmed = line.trim();
+			if (trimmed.startsWith("@import") || trimmed.startsWith("svg")) continue;
+			if (/^[a-zA-Z.][^{]*\{/.test(trimmed)) {
+				currentSelector = trimmed.replace(/\{.*/, "").trim();
+			}
+			if (trimmed.includes("font-family")) {
+				const decl = trimmed.replace(/;$/, "").trim();
+				fontRules.push(`${currentSelector} { ${decl} }`);
+			}
+		}
+		if (fontRules.length > 0) {
+			result = result.replace(
+				/<style>[\s\S]*?<\/style>/,
+				`<style>\n${fontRules.join("\n")}\n</style>`,
+			);
+		} else {
+			result = result.replace(/<style>[\s\S]*?<\/style>\s*/, "");
+		}
+	}
 
 	result = result.replace(
 		/(fill|stroke|background)\s*=\s*"var\(--([^)]+)\)"/g,

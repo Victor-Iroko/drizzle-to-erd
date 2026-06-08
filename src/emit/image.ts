@@ -1,4 +1,6 @@
 import { renderMermaidSVG } from "beautiful-mermaid";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 import type { IRTable } from "../ir.js";
 import { emitMermaid, type EmitOptions } from "./mermaid.js";
 import { inlineCssVariables } from "./inline-css.js";
@@ -6,6 +8,18 @@ import { inlineCssVariables } from "./inline-css.js";
 export type ImageFormat = "svg" | "png";
 
 export type ImageOptions = EmitOptions;
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const FONT_DIR = join(__dirname, "../../fonts");
+
+const FONT_FILES = [
+	join(FONT_DIR, "Inter-Regular.ttf"),
+	join(FONT_DIR, "Inter-Medium.ttf"),
+	join(FONT_DIR, "Inter-SemiBold.ttf"),
+	join(FONT_DIR, "Inter-Bold.ttf"),
+	join(FONT_DIR, "JetBrainsMono-Regular.ttf"),
+	join(FONT_DIR, "JetBrainsMono-Medium.ttf"),
+];
 
 export function emitSvg(tables: IRTable[], opts: ImageOptions = {}): string {
 	const mermaid = emitMermaid(tables, opts);
@@ -22,8 +36,14 @@ export async function emitPng(
 		const mod = await import("@resvg/resvg-js");
 		const Resvg = mod.Resvg;
 		const resvg = new Resvg(flatSvg, {
-			fitTo: { mode: "width", value: 1600 },
+			fitTo: { mode: "width", value: 7680 },
 			background: "white",
+			font: {
+				fontFiles: FONT_FILES,
+				loadSystemFonts: false,
+				defaultFontFamily: "sans-serif",
+				monospaceFamily: "monospace",
+			},
 		});
 		const rendered = resvg.render();
 		const png = rendered.asPng();
