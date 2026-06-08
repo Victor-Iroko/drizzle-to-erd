@@ -178,7 +178,10 @@ describe("emitDot()", () => {
 		const ir = await loadIR();
 		const dotStr = emitDot(ir);
 		expect(dotStr).toStartWith("digraph ER {");
+		expect(dotStr).toContain("rankdir=TB");
+		expect(dotStr).toContain('bgcolor="white"');
 		expect(dotStr).toContain("shape=record");
+		expect(dotStr).toContain('color="#111827"');
 		expect(dotStr).toContain("users");
 		expect(dotStr).toContain("posts");
 		expect(dotStr).toContain("comments");

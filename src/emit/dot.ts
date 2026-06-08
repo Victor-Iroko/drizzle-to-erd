@@ -33,9 +33,9 @@ function formatColumnLabel(col: IRTable["columns"][number]): string {
 	if (col.fk) tags.push("FK");
 	if (col.unique && !col.pk) tags.push("UK");
 	const tagStr = tags.length
-		? ` <FONT COLOR="#888888"><I>(${tags.join(", ")})</I></FONT>`
+		? ` <FONT COLOR="#374151"><I>(${tags.join(", ")})</I></FONT>`
 		: "";
-	return `${htmlEscape(col.name)}${tagStr} : <FONT COLOR="#3b6fa0">${htmlEscape(col.type)}</FONT>`;
+	return `${htmlEscape(col.name)}${tagStr} : <FONT COLOR="#0f4c81">${htmlEscape(col.type)}</FONT>`;
 }
 
 export type DotOptions = {
@@ -43,14 +43,14 @@ export type DotOptions = {
 };
 
 export function emitDot(tables: IRTable[], opts: DotOptions = {}): string {
-	const direction = opts.direction ?? "LR";
+	const direction = opts.direction ?? "TB";
 	const sorted = [...tables].sort((a, b) => a.name.localeCompare(b.name));
 
 	const lines: string[] = [
 		"digraph ER {",
-		`  graph [rankdir=${direction}, fontname="Helvetica", fontsize=11, pad="0.5", nodesep="0.6", ranksep="1.2", bgcolor="transparent"];`,
-		`  node [shape=record, fontname="Helvetica", fontsize=10, style="rounded", color="#888888", penwidth="1.2"];`,
-		`  edge [fontname="Helvetica", fontsize=9, color="#666666", penwidth="1.0"];`,
+		`  graph [rankdir=${direction}, fontname="Helvetica", fontsize=12, pad="0.4", nodesep="0.45", ranksep="0.75", bgcolor="white"];`,
+		`  node [shape=record, fontname="Helvetica", fontsize=11, style="rounded,filled", color="#111827", fillcolor="white", fontcolor="#111827", penwidth="1.8"];`,
+		`  edge [fontname="Helvetica", fontsize=10, color="#1f2937", fontcolor="#111827", penwidth="1.5", arrowsize="0.85"];`,
 		"",
 	];
 

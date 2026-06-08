@@ -72,7 +72,7 @@ The CLI looks for `drizzle.config.{ts,js,mts,mjs,cts,cjs}` in the current workin
 
 ### Image output
 
-The `--format svg` and `--format png` modes render your schema as a real ER diagram (boxes for tables, crow's-foot edges for relationships) via Graphviz. No external service, no browser, no CLI subprocess — everything runs in-process via WASM.
+The `--format svg` and `--format png` modes render your schema as a real ER diagram (boxes for tables, crow's-foot edges for relationships) via Graphviz. Images use a high-contrast, top-to-bottom layout by default so larger schemas stay readable. No external service, no browser, no CLI subprocess — everything runs in-process via WASM.
 
 Add the rendered SVG to your README:
 
